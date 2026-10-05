@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Huella Rola · ¿Cuánto CO₂ echas al año?</title>
+  <meta name="description" content="Calculadora de huella de carbono pensada para Bogotá: recibo de Enel, gas de Vanti, TransMilenio y comida.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="wrap">
+
+    <header class="intro">
+      <p class="tag">Huella Rola 🌱</p>
+      <h1>¿Cuánto CO₂ echas al año viviendo en Bogotá?</h1>
+      <p class="sub">Cuatro preguntas, dos minutos. Ten a la mano el recibo de la luz si puedes.</p>
+    </header>
+
+    <ol class="progress" id="progress">
+      <li class="current">Casa</li>
+      <li>Moverte</li>
+      <li>Comida</li>
+      <li>Viajes</li>
+    </ol>
+
+    <form id="quiz" novalidate>
+      <!-- paso 1 -->
+      <fieldset class="step" data-step="0">
+        <legend>Tu casa</legend>
+
+        <label>¿Cuántos kWh gastan al mes?
+          <span class="hint">Sale en el recibo de Enel como "consumo". Una casa promedio en Bogotá gasta como 150.</span>
+          <input type="number" name="kwh" min="0" value="150">
+        </label>
+
+        <label>¿Tienen gas natural? ¿Cuántos m³ al mes?
+          <span class="hint">Recibo de Vanti. Si no tienen, pon 0.</span>
+          <input type="number" name="gas" min="0" value="20">
+        </label>
+
+        <label>¿Cuántas personas viven ahí?
+          <input type="number" name="people" min="1" value="3">
+        </label>
+      </fieldset>
+
+      <!-- paso 2 -->
+      <fieldset class="step" data-step="1" hidden>
+        <legend>Cómo te mueves</legend>
+
+        <p class="q">¿Cómo te mueves casi siempre?</p>
+        <div class="options">
+          <label class="opt"><input type="radio" name="mode" value="tm" checked><span>🚌 TransMilenio / SITP</span></label>
+          <label class="opt"><input type="radio" name="mode" value="car"><span>🚗 Carro</span></label>
+          <label class="opt"><input type="radio" name="mode" value="moto"><span>🏍️ Moto</span></label>
+          <label class="opt"><input type="radio" name="mode" value="app"><span>🚕 Taxi / apps</span></label>
+          <label class="opt"><input type="radio" name="mode" value="bike"><span>🚲 Bici o a pie</span></label>
+        </div>
+
+        <label>¿Cuántos km haces al día (ida y vuelta)?
+          <span class="hint">Si no sabes: de Suba a la 72 son unos 15 km por trayecto, o sea 30 ida y vuelta.</span>
+          <input type="number" name="km" min="0" value="20">
+        </label>
+
+        <label>¿Cuántos días a la semana?
+          <input type="range" name="days" min="1" max="7" value="5" id="daysRange">
+          <output id="daysOut">5 días</output>
+        </label>
+      </fieldset>
+
+      <!-- paso 3 -->
+      <fieldset class="step" data-step="2" hidden>
+        <legend>Comida</legend>
+        <p class="q">¿Qué tanta carne comes?</p>
+        <div class="options options--col">
+          <label class="opt"><input type="radio" name="diet" value="lots"><span>Carne casi en todas las comidas (la bandeja paisa es religión)</span></label>
+          <label class="opt"><input type="radio" name="diet" value="normal" checked><span>Normal: carne o pollo una vez al día</span></label>
+          <label class="opt"><input type="radio" name="diet" value="little"><span>Poca, unas veces por semana</span></label>
+          <label class="opt"><input type="radio" name="diet" value="veg"><span>Vegetariano / vegano</span></label>
+        </div>
+      </fieldset>
+
+      <!-- paso 4 -->
+      <fieldset class="step" data-step="3" hidden>
+        <legend>Viajes en avión</legend>
+        <label>Vuelos nacionales al año (ida y vuelta)
+          <span class="hint">Tipo Bogotá – Cartagena o Bogotá – Medellín.</span>
+          <input type="number" name="natFlights" min="0" value="1">
+        </label>
+        <label>Vuelos internacionales al año (ida y vuelta)
+          <span class="hint">Tipo Bogotá – Miami o Bogotá – Madrid.</span>
+          <input type="number" name="intFlights" min="0" value="0">
+        </label>
+      </fieldset>
+
+      <div class="nav">
+        <button type="button" class="btn btn--ghost" id="back" hidden>← Atrás</button>
+        <button type="button" class="btn" id="next">Siguiente →</button>
+      </div>
+    </form>
+
+    <!-- resultado -->
+    <section id="result" hidden>
+      <p class="tag">Tu resultado</p>
+      <p class="big"><span id="total">0</span> <small>toneladas de CO₂ al año</small></p>
+      <p id="verdict" class="verdict"></p>
+
+      <div class="stack" id="stack" role="img"></div>
+      <ul class="legend" id="legend"></ul>
+
+      <div class="compare" id="compare"></div>
+
+      <div class="tip" id="tip"></div>
+
+      <div class="nav">
+        <button type="button" class="btn btn--ghost" id="restart">Volver a empezar</button>
+        <button type="button" class="btn" id="share">Copiar resultado</button>
+      </div>
+      <p class="copied" id="copied" hidden>¡Copiado! Pégalo donde quieras.</p>
+    </section>
+
+    <footer>
+      <p>Los números son aproximados (ver el README para los factores que usé). La idea es darse una idea, no reemplazar un estudio serio.</p>
+      <p>Hecho por <a href="https://github.com/santiagohdezlamprea-source">Santiago H. Lamprea</a></p>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
